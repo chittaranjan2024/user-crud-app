@@ -6,9 +6,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.User;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -44,7 +48,10 @@ public class UserServlet extends HttpServlet {
 			 case "/delete":break;	
 			 case "/edit":break;	
 			 case "/update":break;	 
-			 case "/list":listUser(request, response);break;	 
+			 case "/list":listUser(request, response);break;	
+			 case "/login":login(request, response);break;
+			 case "/loginprocess":loginProcess(request, response);break;
+			 case "/logout":logout(request, response);break;
 			}
 		}
 		
@@ -69,11 +76,18 @@ public class UserServlet extends HttpServlet {
 	
 	public void listUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
-		List<User> users=dao.selectAllUsers();
-		request.setAttribute("listuser", users);
-		RequestDispatcher dispatcher=request.getRequestDispatcher("user-list.jsp");
-		dispatcher.forward(request, response);
-		
+		if(isLoggedIn(request, response))
+		{
+			List<User> users=dao.selectAllUsers();
+			request.setAttribute("listuser", users);
+			RequestDispatcher dispatcher=request.getRequestDispatcher("user-list.jsp");
+			dispatcher.forward(request, response);
+		}
+		else
+		{
+			RequestDispatcher dispatcher=request.getRequestDispatcher("login.jsp");
+			dispatcher.forward(request, response);
+		}
 	}
 	
 	public 	void showNewForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
@@ -91,6 +105,72 @@ public class UserServlet extends HttpServlet {
 		User user=new User(name, email, country,password);
 		dao.insertUser(user);
 		response.sendRedirect("list");
+	}
+	
+	
+	public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	{
+		RequestDispatcher dispatcher=request.getRequestDispatcher("login.jsp");
+		dispatcher.forward(request, response);
+	}
+	
+	public void loginProcess(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException, SQLException
+	{
+		String email=request.getParameter("email");
+		String password=request.getParameter("password");
+		UserDAO dao=new UserDAO();
+		try(Connection connection=dao.getConnection())
+		{
+			PreparedStatement preparedStatement=connection.prepareStatement("select * from users where email=? and passwd=?");
+			preparedStatement.setString(1, email);
+			preparedStatement.setString(2, password);
+			
+			ResultSet result=preparedStatement.executeQuery();
+			
+			if(result.next())
+			{
+				HttpSession httpSession=request.getSession();
+				httpSession.setAttribute("status", "active");
+				httpSession.setAttribute("email",email);
+				RequestDispatcher dispatcher=request.getRequestDispatcher("welcome.jsp");
+				dispatcher.forward(request, response);
+			}
+			else
+			{
+				HttpSession httpSession=request.getSession();
+				httpSession.setAttribute("status", "Inactive");
+				RequestDispatcher dispatcher=request.getRequestDispatcher("login.jsp");
+				dispatcher.forward(request, response);
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		
+	}
+	
+	public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	{
+		HttpSession httpSession=request.getSession();
+		httpSession.invalidate();
+		RequestDispatcher dispatcher=request.getRequestDispatcher("login.jsp");
+		dispatcher.forward(request, response);
+	}
+	
+	public Boolean isLoggedIn(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException
+	{
+		HttpSession httpSession=request.getSession();
+		
+		
+		if(httpSession.getAttribute("status")!=null)
+		{
+			return true;
+		}
+		else 
+		{
+			return false;
+		}
 	}
 
 }
