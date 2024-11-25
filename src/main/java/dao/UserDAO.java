@@ -10,8 +10,6 @@ import java.util.List;
 
 import model.User;
 
-
-
 public class UserDAO {
 	
 	private String jdbcURL="jdbc:mysql://localhost:3306/userdb";

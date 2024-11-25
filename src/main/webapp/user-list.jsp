@@ -13,7 +13,8 @@
 </head>
 <body>
   <div class="container"> 
-  
+  <br>
+  <h2>User List</h2>
     <table class="table table-bordered">
       <thead>
        <tr>
@@ -21,6 +22,7 @@
            <th>Name</th>
            <th>Email</th>
            <th>Country</th>
+           <th>Action</th>
        </tr>
       </thead>
       
@@ -33,6 +35,11 @@
             <td> <c:out value="${user.name}"/></td>
             <td> <c:out value="${user.email}"/></td>
             <td> <c:out value="${user.country}"/></td>
+            <td> 
+            <a href="view" type="button" class="btn btn-secondary">View</a>
+			<a href="edit" class="btn btn-success">Edit</a>
+			<a href="delete" class="btn btn-danger">Delete</a>
+             </td>
            </tr>
           
          </c:forEach>

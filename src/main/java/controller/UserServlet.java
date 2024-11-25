@@ -46,7 +46,8 @@ public class UserServlet extends HttpServlet {
 			 case "/new":showNewForm(request, response);break;	
 			 case "/insert":insertUser(request, response);	break;
 			 case "/delete":break;	
-			 case "/edit":break;	
+			 case "/edit":editUser(request, response);break;
+			 case "/view":viewUser(request, response);break;
 			 case "/update":break;	 
 			 case "/list":listUser(request, response);break;	
 			 case "/login":login(request, response);break;
@@ -171,6 +172,19 @@ public class UserServlet extends HttpServlet {
 		{
 			return false;
 		}
+	}
+	
+	public void editUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	{
+		RequestDispatcher dispatcher=request.getRequestDispatcher("edit.jsp");
+		dispatcher.forward(request, response);
+	}
+	
+	
+	public void viewUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	{
+		RequestDispatcher dispatcher=request.getRequestDispatcher("view.jsp");
+		dispatcher.forward(request, response);
 	}
 
 }
