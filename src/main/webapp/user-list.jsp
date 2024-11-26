@@ -36,9 +36,9 @@
             <td> <c:out value="${user.email}"/></td>
             <td> <c:out value="${user.country}"/></td>
             <td> 
-            <a href="view" type="button" class="btn btn-secondary">View</a>
-			<a href="edit" class="btn btn-success">Edit</a>
-			<a href="delete" class="btn btn-danger">Delete</a>
+            <a href="view?id=${user.id}" type="button" class="btn btn-secondary">View</a>
+			<a href="edit?id=${user.id}" class="btn btn-success">Edit</a>
+			<a href="delete?id=${user.id}" class="btn btn-danger">Delete</a>
              </td>
            </tr>
           

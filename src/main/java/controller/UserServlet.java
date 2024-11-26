@@ -45,10 +45,10 @@ public class UserServlet extends HttpServlet {
 			{
 			 case "/new":showNewForm(request, response);break;	
 			 case "/insert":insertUser(request, response);	break;
-			 case "/delete":break;	
+			 case "/delete":deleteUser(request, response); break;	
 			 case "/edit":editUser(request, response);break;
 			 case "/view":viewUser(request, response);break;
-			 case "/update":break;	 
+			 case "/update":updateUser(request, response);break;	 
 			 case "/list":listUser(request, response);break;	
 			 case "/login":login(request, response);break;
 			 case "/loginprocess":loginProcess(request, response);break;
@@ -176,15 +176,85 @@ public class UserServlet extends HttpServlet {
 	
 	public void editUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
-		RequestDispatcher dispatcher=request.getRequestDispatcher("edit.jsp");
-		dispatcher.forward(request, response);
+		int id=Integer.parseInt(request.getParameter("id"));
+		UserDAO dao=new UserDAO();
+		try(Connection connection=dao.getConnection())
+		{
+			User user=dao.selectUser(id);
+			request.setAttribute("user", user);
+			RequestDispatcher dispatcher=request.getRequestDispatcher("edit.jsp");
+			dispatcher.forward(request, response);
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+	
 	}
 	
 	
 	public void viewUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
-		RequestDispatcher dispatcher=request.getRequestDispatcher("view.jsp");
-		dispatcher.forward(request, response);
+		int id=Integer.parseInt(request.getParameter("id"));
+		UserDAO dao=new UserDAO();
+		try(Connection connection=dao.getConnection())
+		{
+			User user=dao.selectUser(id);
+			request.setAttribute("user", user);
+			RequestDispatcher dispatcher=request.getRequestDispatcher("view.jsp");
+			dispatcher.forward(request, response);
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		
+	}
+	
+	public void updateUser(HttpServletRequest request, HttpServletResponse response)
+	{
+		boolean status=false;
+		int id=Integer.parseInt(request.getParameter("id"));
+		String name=request.getParameter("name");
+		String email=request.getParameter("email");
+		String country=request.getParameter("country");
+		
+		UserDAO dao=new UserDAO();
+		try(Connection connection=dao.getConnection())
+		{
+			User user=dao.selectUser(id);
+			user.setName(name);
+			user.setEmail(email);
+			user.setCountry(country);
+			
+			System.out.println(user);
+			 status=dao.updateUser(user);
+			System.out.println(status);
+			response.sendRedirect("list");
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		
+	
+		
+	}
+	
+	public void deleteUser(HttpServletRequest request, HttpServletResponse response)
+	{
+		int id=Integer.parseInt(request.getParameter("id"));
+		UserDAO dao=new UserDAO();
+		try(Connection connection=dao.getConnection())
+		{
+			dao.deleteUser(id);
+			response.sendRedirect("list");
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		
 	}
 
 }

@@ -20,7 +20,7 @@ public class UserDAO {
 	private static final String SELECT_USER_BY_ID="SELECT * FROM users where id=?;";
 	private static final String SELECT_ALL_USERS="select * from users;";
 	private static final String DELETE_USERS_SQL="delete from users where id=?;";
-	private static final String UPDATE_USERS_SQL="update user set name=?, email=?, country=?, password=? where id=?;";
+	private static final String UPDATE_USERS_SQL="update users set uname=?, email=?, country=? where id=?;";
 	
 	
 	public UserDAO() {
@@ -166,7 +166,7 @@ public class UserDAO {
 			preparedStatement.setString(1, user.getName());
 			preparedStatement.setString(2, user.getEmail());
 			preparedStatement.setString(3, user.getCountry());
-			preparedStatement.setString(4, user.getPassword());
+			preparedStatement.setInt(4, user.getId());
 			
 			
 			
@@ -175,7 +175,7 @@ public class UserDAO {
 		}
 		catch(SQLException e)
 		{
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		
 		return status;
@@ -183,36 +183,35 @@ public class UserDAO {
 	
    public static void main(String args[])
    {
-	   UserDAO dao=new UserDAO();
-	   if(dao.getConnection()!=null)
-	   {
-		   System.out.println("Successfully connected to the database!!");
-	   }
-	   else
-	   {   
-		   System.out.println("Problem in database connection!!");
-	   }
+		/*
+		 * UserDAO dao=new UserDAO(); if(dao.getConnection()!=null) {
+		 * System.out.println("Successfully connected to the database!!"); } else {
+		 * System.out.println("Problem in database connection!!"); }
+		 */
 	   
 	   //Data insertion
-	   User user=new User("test","test@abc.com","India","abc@123");
+	   //User user=new User("test","test@abc.com","India","abc@123");
 	   
 	   //dao.insertUser(user);
 	   
 	   //select data by user id
-	   User user1=dao.selectUser(1);
-	   System.out.println(user1);
+	   //User user1=dao.selectUser(1);
+	   //System.out.println(user1);
 	   
 	   //select all users data
-	   List<User> users=dao.selectAllUsers();
+	   //List<User> users=dao.selectAllUsers();
 	   
-	  for(User u:users)
-	  {
-		  System.out.println(u);
-	  }
+		/*
+		 * for(User u:users) { System.out.println(u); }
+		 */
 	  
 	  //Update user
-	  
-	  user=new User("test1","test1@abc.com","USA","test@123");
+	   
+	  UserDAO dao=new UserDAO();
+	  User user=dao.selectUser(1);
+	  user.setName("demo");
+	  user.setCountry("demo");
+	  user.setEmail("demo@abc.com");
 	  Boolean status=dao.updateUser(user);
 	  System.out.println(status);
 		   
