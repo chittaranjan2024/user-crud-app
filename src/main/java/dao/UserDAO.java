@@ -93,13 +93,13 @@ public class UserDAO {
 			user.setEmail(resultSet.getString("email"));
 			user.setCountry(resultSet.getString("country"));
 			user.setPassword(resultSet.getString("passwd"));
-			}
+		    }
 			
 		}
 		catch(SQLException e)
 		{
-			e.printStackTrace();
-			return null;
+			//e.printStackTrace();
+			//return null;
 		}
 		return user;
 	}
